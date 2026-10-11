@@ -1,88 +1,51 @@
 # Beacon Extensions
 
-Extensions add commands to [Beacon](https://github.com/beacon-macos/Beacon), the macOS launcher. Install them from **Beacon Settings → Extensions**; Beacon downloads them from this repository.
+Extensions add new commands to [Beacon](https://github.com/beacon-macos/Beacon), the keyboard-first application launcher for macOS. This repository is the official extension catalog: every extension listed in Beacon Settings comes from here.
 
-| Extension | Commands |
-| --- | --- |
-| [Visual Studio Code](vscode) | Open Recent Project |
+## Available extensions
 
-## How an extension works
+| Extension | Command | What it does |
+| --- | --- | --- |
+| [Visual Studio Code](extensions/vscode) | Open Recent Project | Search your recent Visual Studio Code folders and workspaces, then open one in Visual Studio Code. |
 
-Each extension is a folder named after its identifier, containing a `manifest.json` and a JavaScript file. [`catalog.json`](catalog.json) lists the extensions that Beacon offers in its settings.
+## Install an extension
 
-When you run one of the extension's commands, Beacon evaluates its script in a fresh JavaScriptCore context and calls the command handler. The handler returns a list of items, which Beacon shows in the launcher. Choosing an item performs its action.
+1. Open **Beacon Settings** from the launcher or the menu-bar icon.
+2. In the **Extensions** section, click **Install** next to the extension.
+3. Open Beacon and search for one of the extension's commands, such as **Open Recent Project**.
 
-### `manifest.json`
+When a newer version is published, Beacon shows an **Update** button next to the extension. **Uninstall** removes it.
 
-```json
-{
-  "id": "vscode",
-  "name": "Visual Studio Code",
-  "description": "Open recent Visual Studio Code projects.",
-  "version": "1.0.0",
-  "author": "beacon-macos",
-  "icon": { "app": "com.microsoft.VSCode" },
-  "main": "main.js",
-  "commands": [
-    {
-      "id": "open-recent-project",
-      "title": "Open Recent Project",
-      "subtitle": "Visual Studio Code",
-      "placeholder": "Search recent projects"
-    }
-  ]
-}
+## Use an extension command
+
+Select a command and press `Return`. Its results replace the launcher list:
+
+- Type to filter the results.
+- Use `↑` and `↓` to move through them.
+- Press `Return` to open the selected result.
+- Press `Esc` to go back to all results.
+
+Commands are regular launcher results, so you can also add them to your favorites with `⌘K`.
+
+## How extensions work
+
+An extension is a small folder with a manifest that describes its commands and a JavaScript file that implements them. When you install one, Beacon downloads the folder from this repository and stores it in `~/Library/Application Support/Beacon/Extensions`.
+
+When you run a command, Beacon runs the extension's script with the JavaScriptCore engine built into macOS. The script can read files and SQLite databases and returns a list of results. Each result opens a file, folder, or URL, optionally in a specific application. Extensions cannot access the network or run other programs.
+
+## Security
+
+Extensions can read any file that your user account can read. Every extension in this repository is reviewed before it is merged, and Beacon installs extensions only from this repository.
+
+## Repository layout
+
+```text
+catalog.json        Extensions that Beacon lists in its settings
+extensions/
+└── vscode/         One folder per extension, named after its identifier
+CONTRIBUTING.md     How to write, test, and submit an extension
 ```
 
-| Field | Description |
-| --- | --- |
-| `id` | Lowercase letters, digits, and hyphens. Must match the folder name. |
-| `name`, `description` | Shown in Beacon Settings. |
-| `version` | Dotted version. Beacon offers an update when `catalog.json` lists a newer one. |
-| `icon` | Optional. One of `{ "app": "<bundle identifier>" }`, `{ "file": "<path>" }`, or `{ "symbol": "<SF Symbol name>" }`. |
-| `main` | The script file name, in the same folder. |
-| `commands` | The commands that appear in the launcher. `subtitle` defaults to the extension name, and `placeholder` is the search field placeholder while the command is open. |
+## Contributing
 
-### The script
-
-The script registers a handler for each command in the manifest. Handlers are synchronous and return an array of items:
-
-```js
-beacon.registerCommand("open-recent-project", () => [
-  {
-    title: "project",
-    subtitle: "~/project",
-    icon: { file: "/Users/me/project" },
-    action: { type: "open", target: "/Users/me/project", application: "com.microsoft.VSCode" },
-  },
-]);
-```
-
-| Item field | Description |
-| --- | --- |
-| `title`, `subtitle` | The row text. Beacon searches both. |
-| `icon` | Optional, in the same format as the manifest icon. |
-| `action` | `{ "type": "open", "target": "<path or URL>", "application": "<bundle identifier>" }`. A target that starts with `/` or `~` is a path; anything else must be a URL. `application` is optional. |
-
-The global `beacon` object provides:
-
-| API | Description |
-| --- | --- |
-| `beacon.registerCommand(id, handler)` | Registers the handler for a command in the manifest. |
-| `beacon.homeDirectory` | The user's home directory. |
-| `beacon.fileExists(path)` | Whether a file or folder exists. |
-| `beacon.readFile(path)` | A UTF-8 file's contents, or `null`. |
-| `beacon.querySQLite(path, sql)` | Rows from a SQLite database opened read-only, as objects keyed by column name. Throws on failure. |
-| `console.log(...)` | Writes to Beacon's log. |
-
-Paths may start with `~`.
-
-## Adding an extension
-
-1. Create a folder named after the extension identifier with `manifest.json` and the script.
-2. Add the extension to `catalog.json` with the same `id`, `name`, `description`, `version`, and `icon` as the manifest.
-3. Open a pull request.
-
-To publish an update, raise `version` in both `manifest.json` and `catalog.json`.
-
-Extensions run with Beacon's access to your files, so every extension in this repository is reviewed before it is merged.
+New extensions and improvements are welcome. [CONTRIBUTING.md](CONTRIBUTING.md) explains the extension format, the API available to scripts, how to test an extension locally, and how to submit it.
