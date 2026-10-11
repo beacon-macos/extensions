@@ -50,7 +50,6 @@ The script registers a handler for each command in the manifest. Handlers are sy
 ```js
 beacon.registerCommand("open-recent-project", () => [
   {
-    id: "/Users/me/project",
     title: "project",
     subtitle: "~/project",
     icon: { file: "/Users/me/project" },
@@ -61,7 +60,6 @@ beacon.registerCommand("open-recent-project", () => [
 
 | Item field | Description |
 | --- | --- |
-| `id` | Optional stable identifier. |
 | `title`, `subtitle` | The row text. Beacon searches both. |
 | `icon` | Optional, in the same format as the manifest icon. |
 | `action` | `{ "type": "open", "target": "<path or URL>", "application": "<bundle identifier>" }`. A target that starts with `/` or `~` is a path; anything else must be a URL. `application` is optional. |

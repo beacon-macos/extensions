@@ -61,7 +61,6 @@ function projectItem(path) {
   const name = path.split("/").filter(Boolean).pop() ?? path;
   const isWorkspace = name.endsWith(WORKSPACE_EXTENSION);
   return {
-    id: path,
     title: isWorkspace ? name.slice(0, -WORKSPACE_EXTENSION.length) + " (Workspace)" : name,
     subtitle: abbreviateHome(path),
     icon: { file: path },
