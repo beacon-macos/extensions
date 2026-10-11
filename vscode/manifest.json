@@ -1,0 +1,17 @@
+{
+  "id": "vscode",
+  "name": "Visual Studio Code",
+  "description": "Open recent Visual Studio Code projects.",
+  "version": "1.0.0",
+  "author": "beacon-macos",
+  "icon": { "app": "com.microsoft.VSCode" },
+  "main": "main.js",
+  "commands": [
+    {
+      "id": "open-recent-project",
+      "title": "Open Recent Project",
+      "subtitle": "Visual Studio Code",
+      "placeholder": "Search recent projects"
+    }
+  ]
+}

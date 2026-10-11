@@ -1,0 +1,11 @@
+{
+  "extensions": [
+    {
+      "id": "vscode",
+      "name": "Visual Studio Code",
+      "description": "Open recent Visual Studio Code projects.",
+      "version": "1.0.0",
+      "icon": { "app": "com.microsoft.VSCode" }
+    }
+  ]
+}
